@@ -1,0 +1,108 @@
+/**
+ * Description: To demonstrate employee salary data from an input file called "employeeSalaries.txt" and create an output file named "employeeData.txt" .
+ *
+ * Author : RAJA HAZIQ
+ * DATE : 14 MARCH 2024
+ */
+
+//import the respective packages
+import java.io.*;
+import java.util.List;
+import java.util.ArrayList;
+
+class Employee {
+    //Declare the variables
+    String name;
+    double baseSalary;
+    int yearsOfService;
+    
+    //declare without parameter
+    public Employee(String name, double baseSalary, int yearsOfService) 
+    {
+        this.name = name;
+        this.baseSalary = baseSalary;
+        this.yearsOfService = yearsOfService;
+    }
+    
+    //to calculate the AnnualSalary for each employee
+    public double calculateAnnualSalary() 
+    {
+        return baseSalary + (baseSalary * 0.05 * yearsOfService);
+    }
+}
+
+//Driver class
+public class EmployeeSalaryProcessor {
+
+    public static void main(String[] args) {
+        //Set the input/output file
+        List <Employee> employees = new ArrayList <> ();
+        //input file
+        String inputFile = ("C:/Users/TUF/Downloads/employeeSalaries.txt");
+        //output files
+        String outputFile = ("employeeData.txt");
+        
+        //try block
+        try(BufferedReader reader = new BufferedReader (new FileReader(inputFile));
+             PrintWriter writer = new PrintWriter (new FileWriter(outputFile)))  
+             {
+                    
+            String line;
+            while ((line = reader.readLine()) != null) 
+            {
+                try {
+                    String[] parts = line.split("\\|");
+                    String name = parts[0].trim();
+                    double baseSalary = Double.parseDouble(parts[1].trim());
+                    int yearsOfService = Integer.parseInt(parts[2].trim());
+                    employees.add(new Employee(name, baseSalary, yearsOfService));
+                } catch (Exception e) {
+                    System.out.println(" Skipping invalid record: " + line);
+                }
+            }
+
+            Employee topPerformer = null;
+            Employee leastExperienced = null;
+
+            for (Employee emp : employees) 
+            {
+                if (topPerformer == null || emp.calculateAnnualSalary() > topPerformer.calculateAnnualSalary()) {
+                    topPerformer = emp;
+                }
+                if (leastExperienced == null || emp.yearsOfService < leastExperienced.yearsOfService) {
+                    leastExperienced = emp;
+                }
+                System.out.println(emp.name + " | " + emp.calculateAnnualSalary() + " | " + emp.yearsOfService);
+            }
+
+            // Creatively display the top performer and least experienced employee details
+            if (topPerformer != null) 
+            {
+                System.out.println("\n----- The Top Performer Employee ! -----");
+                System.out.println(" |   Name: " + topPerformer.name);
+                System.out.println(" |    Annual Salary: " + topPerformer.calculateAnnualSalary());
+                System.out.println(" |    Years of Service: " + topPerformer.yearsOfService);
+            }
+
+            if (leastExperienced != null)
+            {
+                System.out.println("\n----- The Employee with Least Years of Service ! -----");
+                System.out.println(" |    Name: " + leastExperienced.name);   
+                System.out.println(" |    Annual Salary: " + leastExperienced.calculateAnnualSalary());
+                System.out.println(" |    Years of Service: " + leastExperienced.yearsOfService);
+            }
+
+            System.out.println("The Processing is completed !. For More Information , Please Check The " + outputFile + " for the final details !.");
+
+        
+            }//Implement error handling to manage potential exceptions
+            catch (IOException e) 
+            {
+            System.err.println("An error occurred ! : " + e.getMessage());
+        }
+        catch (Exception e) 
+        {
+            System.out.println("Have Problem ? : " +e.getMessage());
+        }
+    }//end of main method
+}//end of driver class
